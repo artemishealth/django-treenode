@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
 from django.utils.encoding import force_text, python_2_unicode_compatible
@@ -14,6 +15,9 @@ from .debug import debug_performance
 from .memory import clear_refs, update_refs
 from .signals import connect_signals, no_signals
 from .utils import join_pks, split_pks
+
+
+TN_PARENT_COLUMN_NAME = getattr(settings, "TN_PARENT_COLUMN_NAME", "tn_parent_id")
 
 
 @python_2_unicode_compatible
@@ -86,7 +90,8 @@ class TreeNodeModel(models.Model):
         related_name='tn_children',
         on_delete=models.CASCADE,
         blank=True, null=True,
-        verbose_name=_('Parent'), )
+        verbose_name=_('Parent'),
+        db_column=TN_PARENT_COLUMN_NAME, )
 
     tn_priority = models.PositiveSmallIntegerField(
         default=0,
